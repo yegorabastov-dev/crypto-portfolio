@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Мой портфель</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1 class="brand">Мой портфель</h1>
+    <p class="updated" id="updated" aria-live="polite"></p>
+  </header>
+
+  <div class="notice notice-warn" id="demo-banner" hidden>
+    Сейчас показаны демонстрационные цифры, это не реальные цены. Настоящие данные появятся после первого обновления (см. README).
+  </div>
+  <div class="notice notice-error" id="load-error" hidden></div>
+  <div class="notice notice-warn" id="storage-warning" hidden>
+    Браузер не разрешает сохранять данные (возможно, включён приватный режим). Портфель пропадёт после закрытия вкладки: скачайте копию.
+  </div>
+
+  <main>
+    <section class="summary" aria-label="Итоги портфеля">
+      <p class="summary-label">Стоимость портфеля</p>
+      <p class="total" id="total">—</p>
+      <div class="bar" id="alloc-bar" role="img" aria-label="Доли монет в портфеле"></div>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="Разделы">
+      <button class="tab" id="tab-btn-portfolio" role="tab" aria-selected="true" aria-controls="tab-portfolio" type="button">Портфель</button>
+      <button class="tab" id="tab-btn-rebalance" role="tab" aria-selected="false" aria-controls="tab-rebalance" type="button">Ребалансировка</button>
+    </div>
+
+    <section id="tab-portfolio" role="tabpanel" aria-labelledby="tab-btn-portfolio">
+      <form class="add-form" id="add-form" autocomplete="off">
+        <div class="field combo">
+          <label for="coin-input">Монета</label>
+          <input id="coin-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="coin-list" placeholder="Название или тикер, например BTC" spellcheck="false">
+          <ul class="combo-list" id="coin-list" role="listbox" hidden></ul>
+        </div>
+        <div class="field">
+          <label for="amount-input">Сколько у вас</label>
+          <input id="amount-input" type="text" inputmode="decimal" placeholder="0,5">
+        </div>
+        <button class="btn btn-primary" type="submit">Добавить</button>
+      </form>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+
+      <div class="table-wrap" id="portfolio-wrap">
+        <table class="grid" id="portfolio-table">
+          <caption class="sr-only">Монеты в портфеле: цена, капитализация и изменение цены за разные периоды</caption>
+        </table>
+      </div>
+      <div class="empty" id="empty" hidden>
+        <p><strong>Портфель пока пуст.</strong></p>
+        <p>Найдите монету выше и укажите, сколько её у вас. Здесь появятся цена, капитализация и изменение за периоды от недели до пяти лет.</p>
+      </div>
+
+      <div class="backup">
+        <button class="btn" id="export-btn" type="button">Скачать копию портфеля</button>
+        <button class="btn" id="import-btn" type="button">Загрузить из файла</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+        <p class="hint">Портфель хранится только в этом браузере. Если очистите данные сайта или откроете сайт на другом устройстве, он не появится. Для переноса скачайте копию.</p>
+      </div>
+    </section>
+
+    <section id="tab-rebalance" role="tabpanel" aria-labelledby="tab-btn-rebalance" hidden>
+      <div class="controls">
+        <div class="field">
+          <label for="mode">Какими должны быть доли</label>
+          <select id="mode">
+            <option value="equal">Поровну</option>
+            <option value="cap">По капитализации</option>
+            <option value="custom">Свои проценты</option>
+          </select>
+        </div>
+        <div class="field" id="cap-field" hidden>
+          <label for="cap-pct">Максимум на одну монету, %</label>
+          <input id="cap-pct" type="text" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="trade">Сделки</label>
+          <select id="trade">
+            <option value="sell">Продавать и покупать</option>
+            <option value="buyonly">Только докупать</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="cash">Добавить новых денег, $</label>
+          <input id="cash" type="text" inputmode="decimal" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="band">Порог отклонения, п.&nbsp;п.</label>
+          <input id="band" type="text" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="fee">Комиссия биржи, %</label>
+          <input id="fee" type="text" inputmode="decimal">
+        </div>
+      </div>
+      <p class="hint controls-hint">
+        «Только докупать» распределяет только новые деньги и ничего не продаёт. Порог: если ни одна монета не отклонилась от цели сильнее, менять ничего не нужно (0 — считать всегда).
+      </p>
+      <div id="rebalance-result"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Не является инвестиционной рекомендацией. Сайт ничего не покупает и не продаёт, а только считает.</p>
+    <p>Цены и капитализация: CoinGecko. История цен: Binance. Данные обновляются раз в час, изменения за периоды считаются по дневным ценам и приблизительны.</p>
+  </footer>
+
+  <script src="rebalance.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
